@@ -1,0 +1,344 @@
+@load base/protocols/krb/
+@load base/files/x509/
+
+
+const broker_port: port = 9999/tcp &redef;
+redef exit_only_after_terminate = T;
+redef Broker::endpoint_name = "Bro_for_rabbit2bro";
+global msg_count = 0;
+global h: opaque of Broker::Handle;
+global a: string;
+global waitforme: bool=F;
+global my_event: event(msg: string, c: count);
+
+
+
+type mytest: record{
+	a: string &default = "doll";
+	b: string &default= "T";
+};
+
+type com: record{
+        status_code: string &default = "U";
+        reason: string &default= "T";
+        begin_cert: time &optional;
+        end_cert: time &optional;
+        key_length: int &optional;
+        serial_no: string &optional;
+        issuer: string &optional;
+	seen: time &optional;
+};
+type lbl: record{
+	status: string &default = "U";
+	status_expires: time &optional;
+	as_req: com &optional;
+	as_res: com &optional;
+	tgt_req: com &optional;
+	tgt_res: com &optional;
+};
+
+
+type myrecordset: set[mytest];
+type lbltable: table[string] of lbl;
+#global lblvar: lbltable; #([["1"]] =$status="W",[["2"]]=$status="x");
+global my_event2: event(msg: mytest);
+global my_event3: event(msg: myrecordset);
+
+global mytable: table[string] of mytest;
+
+
+
+
+
+function do_lookup(key: string)
+        {
+#        when ( local res = Broker::lookup(h, Broker::data(key)) )
+#                {
+#                print "lookup",key,res, Broker::refine_to_string(res$result);
+#		a= Broker::refine_to_string(res$result);
+#		return;
+#                }
+#        timeout 10000sec
+#                { print "timeout", key; }
+	
+
+        }
+
+
+event krb_error(c: connection, msg: KRB::Error_Msg) &priority=5{
+ print " ";
+ print "KRB_ERROR";
+ print msg;
+ print "next is the connection info";
+ print c;
+}
+
+event x509_certificate(f: fa_file, cert_ref: opaque of x509, cert: X509::Certificate){
+ #We get this if the test was successful
+ print " ";
+ print "x509 certificate sucessfull";
+ print cert;
+}
+
+event x509_ext_basic_constraints(f: fa_file, ext: X509::BasicConstraints){
+print "x509 test";
+}
+
+
+
+event krb_as_request(c: connection, msg: KRB::KDC_Request) &priority=-20
+        {
+ print " ";
+	print "got as req_marked";
+        local info: KRB::Info;
+	
+	if ( c?$krb && c$krb$logged )
+                return;
+
+
+        if ( !c?$krb )
+                {
+                info$ts  = network_time();
+                info$uid = c$uid;
+                info$id  = c$id;
+                }
+        else
+                info = c$krb;
+
+        info$request_type = "AS";
+        info$client = fmt("%s/%s", msg$client_name, msg$service_realm);
+        info$service = msg$service_name;
+
+        if ( msg?$from )
+                info$from = msg$from;
+
+        info$till = msg$till;
+
+        info$forwardable = msg$kdc_options$forwardable;
+        info$renewable = msg$kdc_options$renewable;
+
+	print info;
+        }
+
+
+event krb_tgs_request(c: connection, msg: KRB::KDC_Request) &priority=5
+        {
+
+	print " ";
+	print "got KRB TGS request";
+	
+        if ( c?$krb && c$krb$logged )
+                return;
+
+        local info: KRB::Info;
+        info$ts  = network_time();
+        info$uid = c$uid;
+        info$id  = c$id;
+        info$request_type = "TGS";
+        info$service = msg$service_name;
+        if ( msg?$from ) info$from = msg$from;
+        info$till = msg$till;
+
+        info$forwardable = msg$kdc_options$forwardable;
+        info$renewable = msg$kdc_options$renewable;
+
+	print info;
+        }
+
+event krb_as_response(c: connection, msg: KRB::KDC_Response) &priority=5
+        {
+	print "";
+	print "got KRB as response";
+        local info: KRB::Info;
+
+        if ( c?$krb && c$krb$logged )
+                return;
+
+        if ( c?$krb )
+                info = c$krb;
+
+        if ( ! info?$ts )
+                {
+                info$ts  = network_time();
+                info$uid = c$uid;
+                info$id  = c$id;
+                }
+
+        if ( ! info?$client )
+                info$client = fmt("%s/%s", msg$client_name, msg$client_realm);
+
+        info$service = msg$ticket$service_name;
+        info$cipher  = KRB::cipher_name[msg$ticket$cipher];
+        info$success = T;
+#	Broker::send_print("bro/events/test", "AS result true");	
+	Broker::send_print("bro/events/test", "AS response OK from hostname " +addr_to_ptr_name(c$id$orig_h));	
+	print info;
+	print "";
+	print "now the connection info";
+	print c;
+	
+        }
+
+
+event krb_tgs_response(c: connection, msg: KRB::KDC_Response) &priority=5
+        {
+	print "";
+	print "got krb tgs response";
+        local info: KRB::Info;
+
+        if ( c?$krb && c$krb$logged )
+                return;
+
+        if ( c?$krb )
+                info = c$krb;
+
+        if ( ! info?$ts )
+                {
+                info$ts  = network_time();
+                info$uid = c$uid;
+                info$id  = c$id;
+                }
+
+        if ( ! info?$client )
+                info$client = fmt("%s/%s", msg$client_name, msg$client_realm);
+
+        info$service = msg$ticket$service_name;
+        info$cipher  = KRB::cipher_name[msg$ticket$cipher];
+        info$success = T;
+
+	print info;
+        }
+
+
+ event bro_init(){
+ print "startup";
+ print "enableing broker";
+ Broker::enable();
+ Broker::subscribe_to_prints("bro/print/");
+ Broker::listen(broker_port, "127.0.0.1");  #uncomment this to make bro the server
+ #Broker::connect("127.0.0.1", broker_port, 1sec);
+h = Broker::create_master("rabbitmaster");
+Broker::insert(h, Broker::data("1"), Broker::data(123));
+local myset: set[string] = {"a", "b", "c"};
+local myvec: vector of string = {"alpha", "beta", "gamma"};
+local myrecord2 = myrecordset([$b="1"],[$b="2"]);
+add myrecord2[mytest ($b="t")];
+#local myvec2: vector of field = {field: string: "a", field: string: "b"};
+Broker::insert(h, Broker::data("myset"), Broker::data(myset));
+#Broker::insert(h, Broker::data("myvec"), Broker::data(myvec));
+local myrecord: mytest = record($a="12");
+Broker::insert(h, Broker::data("myvec"), Broker::data(myvec));
+Broker::insert(h, Broker::data("fun"),Broker::data(myrecord2));
+
+mytable["1"] = mytest($b="1");
+print mytable;
+}
+
+
+
+
+
+event Broker::incoming_connection_established(peer_name: string)
+        {
+        print "Broker::incoming_connection_established", peer_name;
+        print "sending back hello world";
+#        Broker::send_print("bro/events/test", "1");
+#        Broker::send_print("bro/events/test", "myset");
+#        Broker::send_print("bro/events/test", "myvec");
+#	Broker::send_event("bro/events/my_event", Broker::event_args(my_event, "hi", 0));
+#        Broker::send_print("bro/events/test", "fun");
+	local mytest2 = mytest($b="1");
+	local myrecord2 = myrecordset([$b="1"],[$b="2"]);
+	print myrecord2;
+	for (d in myrecord2){
+		
+		print d;
+		print d$b;
+		print "stop";
+}
+#	print myrecord2[mytest($b="1")]$a;	
+	Broker::send_event("bro/events/my_event", Broker::event_args(my_event3,myrecord2[mytest($b="1")]));
+#	Broker::send_event("bro/events/my_event", Broker::event_args(my_event2,mytest2));
+	
+
+        }
+
+event Broker::print_handler(msg: string)
+        {
+        ++msg_count;
+        print "got print message", msg;
+
+        if ( msg_count == 3 )
+                #terminate();
+
+        print "sending back hello world";
+        Broker::send_print("bro/events/test", "hello world");
+
+        }
+
+
+event Broker::incoming_connection_broken(peer_name: string)
+        {
+        print "Broker::incoming_connection_broken", peer_name;
+
+        #terminate();
+        }
+
+
+event bro_done(){
+ print "finished";
+}
+
+
+event krb_tgs_response(c: connection, msg: KRB::KDC_Response){
+ print "krb_ap";
+
+ print msg;
+}
+
+
+event krb_safe(c: connection, is_orig: bool, msg: KRB::SAFE_Msg){
+ #A Kerberos 5 Safe Message as defined in RFC 4120. This is a safe (checksummed) application message 
+
+ print "krb_ap";
+print msg;
+ 
+}
+
+event nonexist(){
+ print "a";
+}
+
+
+
+event Broker::outgoing_connection_established(peer_address: string,
+                                            peer_port: port,
+                                            peer_name: string)
+        {
+	print "OUTGOING ESTABLISHED";
+        print "Broker::outgoing_connection_established",
+              peer_address, peer_port, peer_name;
+#        h = Broker::create_frontend("rabbitmaster");
+
+	when ( local res = Broker::keys(h) )
+                {
+                print "remote keys", res;
+		
+		do_lookup(Broker::refine_to_string(Broker::vector_lookup(res$result, 0)));
+		
+		
+                }
+        timeout 10min #seems that the sec actually stands for ms
+               { print "timeout"; }
+
+
+#        event do_write();
+        }
+
+event Broker::outgoing_connection_broken(peer_address: string,
+                                       peer_port: port)
+        {
+#        terminate();
+        }
+
+

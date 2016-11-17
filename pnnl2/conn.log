@@ -1,0 +1,24 @@
+#separator \x09
+#set_separator	,
+#empty_field	(empty)
+#unset_field	-
+#path	conn
+#open	2016-11-17-13-35-09
+#fields	ts	uid	id.orig_h	id.orig_p	id.resp_h	id.resp_p	proto	service	duration	orig_bytes	resp_bytes	conn_state	local_orig	local_resp	missed_bytes	history	orig_pkts	orig_ip_bytes	resp_pkts	resp_ip_bytes	tunnel_parents
+#types	time	string	addr	port	addr	port	enum	string	interval	count	count	string	bool	bool	count	string	count	count	count	count	set[string]
+1473272106.741998	CK3H9628isXoZoWjGl	130.20.79.15	55078	130.20.78.11	88	tcp	krb_tcp	0.104912	2750	3045	SF	-	-	0	ShADadFf	9	3226	7	3417	(empty)
+1473272106.737025	CxB3Z229jV47FpAvH1	130.20.79.15	52082	130.20.78.11	53	udp	dns	0.000900	44	79	SF	-	-	0	Dd	1	72	1	107	(empty)
+1473272106.740370	CGIDZ8PpvQWXzm9ok	130.20.79.15	48249	130.20.78.11	53	udp	dns	0.001033	66	82	SF	-	-	0	Dd	2	122	2	138	(empty)
+1473272105.321092	CwCPHO2Swuhq2t8Acg	130.20.76.3	1985	224.0.0.102	1985	udp	-	1.963417	360	0	S0	-	-	0	D	5	500	0	0	(empty)
+1473272105.322594	CzNdRW1YCl9iHD6VL1	130.20.76.2	1985	224.0.0.102	1985	udp	-	1.904609	360	0	S0	-	-	0	D	5	500	0	0	(empty)
+1473272105.790618	C7YU0f3CX4EfeJ9Ky	130.20.76.154	63091	130.20.79.255	1947	udp	-	-	-	-	S0	-	-	0	D	1	68	0	0	(empty)
+1473272105.924435	CCi6baslxmGNdi3ia	130.20.76.139	65000	239.255.255.250	1900	udp	-	1.007715	348	0	S0	-	-	0	D	2	404	0	0	(empty)
+1473272105.980890	CnyoSp7PBD0Lj8AId	130.20.79.40	55993	130.20.79.255	8612	udp	-	-	-	-	S0	-	-	0	D	1	44	0	0	(empty)
+1473272105.981920	CwxdZP2IozSHwIqQVg	130.20.79.40	62282	224.0.0.1	8612	udp	-	-	-	-	S0	-	-	0	D	1	44	0	0	(empty)
+1473272106.055874	Cqx0SS1E7o8wdbNDVg	fe80::1466:6949:1f87:5c97	546	ff02::1:2	547	udp	-	-	-	-	S0	-	-	0	D	1	144	0	0	(empty)
+1473272106.117797	CjBoB73ucOOMgFEeh9	fe80::c17c:7301:9d45:36d1	546	ff02::1:2	547	udp	-	-	-	-	S0	-	-	0	D	1	144	0	0	(empty)
+1473272106.979823	C5e5w71RLxSi9gIqIa	130.20.79.121	54885	255.255.255.255	1211	udp	-	-	-	-	S0	-	-	0	D	1	128	0	0	(empty)
+1473272107.238600	CwtDJ74l5ATtRNbG74	130.20.78.40	60335	239.255.255.250	1900	udp	-	-	-	-	S0	-	-	0	D	1	161	0	0	(empty)
+1473272105.308117	CSfrT52FDXsCpYAoD4	130.20.78.40	63435	130.20.79.15	22	tcp	-	0.001255	0	256	OTH	-	-	0	^dA	2	80	3	376	(empty)
+1473272106.225402	CaK7bGvF1nCZF31Rh	130.20.78.40	52363	130.20.79.15	22	tcp	-	0.881034	64	160	OTH	-	-	0	DdA	2	144	2	240	(empty)
+#close	2016-11-17-16-15-47

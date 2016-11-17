@@ -1,0 +1,36 @@
+@load base/protocols/krb/
+
+event bro_init(){
+ print "startup";
+}
+
+event bro_done(){
+ print "finished";
+}
+
+event krb_ap_request(c: connection, ticket: KRB::Ticket, opts: KRB::AP_Options){
+ print "krb_ap";
+}
+
+
+event krb_tgs_response(c: connection, msg: KRB::KDC_Response){
+ print "krb_ap";
+
+ print msg;
+}
+
+#event krb_tgs_request(c: connection, msg: KRB::KDC_Response){
+# print msg;
+#}
+
+event krb_safe(c: connection, is_orig: bool, msg: KRB::SAFE_Msg){
+ #A Kerberos 5 Safe Message as defined in RFC 4120. This is a safe (checksummed) application message 
+
+ print "krb_ap";
+print msg;
+ 
+}
+
+event nonexist(){
+ print "a";
+}

@@ -1,0 +1,12 @@
+#separator \x09
+#set_separator	,
+#empty_field	(empty)
+#unset_field	-
+#path	dns
+#open	2016-11-17-13-35-09
+#fields	ts	uid	id.orig_h	id.orig_p	id.resp_h	id.resp_p	proto	trans_id	rtt	query	qclass	qclass_name	qtype	qtype_name	rcode	rcode_name	AA	TC	RD	RA	Z	answers	TTLs	rejected
+#types	time	string	addr	port	addr	port	enum	count	interval	string	count	string	count	string	count	string	bool	bool	bool	bool	count	vector[string]	vector[interval]	bool
+1473272106.737025	CxB3Z229jV47FpAvH1	130.20.79.15	52082	130.20.78.11	53	udp	20310	0.000900	_kerberos._tcp.seppala.net	1	C_INTERNET	33	SRV	0	NOERROR	T	F	T	T	0	dc1.seppala.net	900.000000	F
+1473272106.740370	CGIDZ8PpvQWXzm9ok	130.20.79.15	48249	130.20.78.11	53	udp	45983	0.000821	dc1.seppala.net	1	C_INTERNET	1	A	0	NOERROR	T	F	T	T	0	130.20.78.11	900.000000	F
+1473272106.740446	CGIDZ8PpvQWXzm9ok	130.20.79.15	48249	130.20.78.11	53	udp	8449	-	dc1.seppala.net	1	C_INTERNET	28	AAAA	0	NOERROR	F	F	T	F	0	-	-	T
+#close	2016-11-17-16-15-47

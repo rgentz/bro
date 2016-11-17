@@ -1,0 +1,11 @@
+#separator \x09
+#set_separator	,
+#empty_field	(empty)
+#unset_field	-
+#path	x509
+#open	2016-11-17-13-35-09
+#fields	ts	id	certificate.version	certificate.serial	certificate.subject	certificate.issuer	certificate.not_valid_before	certificate.not_valid_after	certificate.key_alg	certificate.sig_alg	certificate.key_type	certificate.key_length	certificate.exponent	certificate.curve	san.dns	san.uri	san.email	san.ip	basic_constraints.ca	basic_constraints.path_len
+#types	time	string	count	string	string	string	time	time	string	string	string	count	string	string	vector[string]	vector[string]	vector[string]	vector[addr]	bool	count
+1473272106.743095	FJYvcr2JRWDovKxnTg	1	F9D655E0643054E9	DC=net,DC=seppala,UID=root	CN=CA,DC=seppala,DC=net	1473218817.000000	1475810817.000000	rsaEncryption	sha256WithRSAEncryption	rsa	2048	65537	-	-	-	-	-	-	-
+1473272106.846023	Fq2o4Q1d3wSrONBQ9i	3	6BE769A714D1DA1E122331EAC716648E6CD0F646	UID=kdc,DC=seppala,DC=net	CN=CA,DC=seppala,DC=net	1470712929.000000	1502335329.000000	rsaEncryption	sha256WithRSAEncryption	rsa	2047	65537	-	-	-	-	-	F	-
+#close	2016-11-17-16-15-47

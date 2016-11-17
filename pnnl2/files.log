@@ -1,0 +1,11 @@
+#separator \x09
+#set_separator	,
+#empty_field	(empty)
+#unset_field	-
+#path	files
+#open	2016-11-17-13-35-09
+#fields	ts	fuid	tx_hosts	rx_hosts	conn_uids	source	depth	analyzers	mime_type	filename	duration	local_orig	is_orig	seen_bytes	total_bytes	missing_bytes	overflow_bytes	timedout	parent_fuid	md5	sha1	sha256	extracted
+#types	time	string	set[addr]	set[addr]	set[string]	string	count	set[string]	string	string	interval	bool	bool	count	count	count	count	bool	string	string	string	string	string
+1473272106.743095	FJYvcr2JRWDovKxnTg	130.20.79.15	130.20.78.11	CK3H9628isXoZoWjGl	KRB_TCP	0	X509,SHA1,MD5	application/pkix-cert	-	0.000000	-	T	767	-	0	0	F	-	5cb1b5b457e9ea84deeaab0108409295	d9f4dc4e3a10dd12c2122fdc02648597ca5296b3	-	-
+1473272106.846023	Fq2o4Q1d3wSrONBQ9i	130.20.78.11	130.20.79.15	CK3H9628isXoZoWjGl	KRB_TCP	0	X509,SHA1,MD5	application/pkix-cert	-	0.000000	-	F	976	-	0	0	F	-	aed0d681c22a699c7210c32ada83cc19	9c3ddc3598a0b1229a79517ba5675dc30e9af3e1	-	-
+#close	2016-11-17-16-15-47
